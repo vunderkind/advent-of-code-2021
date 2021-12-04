@@ -8,56 +8,42 @@ readFile('../files/december-4-1.txt', 'utf-8', (err, looper) => {
 
         let { callout, bingo } = prepareBingo(looper, data, 6);
 
-        // playBingo(callout, bingo);
-
-        // bingo.map(item => console.log(item.length))
-
-
-
-
+        playBingo(callout, bingo);
     })
 })
 
-const playBingo = (callout, bingoSource) => {
-    const main = [...bingoSource];
-    let bingo = [...bingoSource]
+const playBingo = (callout, bingo) => {
     let isInProgress = true;
-    let bingoPosition = 0;
     let results;
     let boardWithCompleteRows = false;
 
     while (isInProgress) {
         
         // Continue to go through the list of bingo boards
-        for (let i = 0; i < bingo.length; i++) {
-            for (let k = 0; k < callout.length; k++) {
-
-                for (let j = 0; j < bingo[i].length; j++) {
-                    console.log(bingo[i].length)
+        for (let i = 0; i < callout.length; i++) {
+            if (boardWithCompleteRows === true) {
+                        break;
+            }
+            for (let j = 0; j < bingo.length; j++) {
+                for (let k = 0; k < bingo[j].length; k++) {
 
                     // Check the bingo board for a match
-                    if (bingo[i][j] === callout[k]) {
-                            bingo[i][j] = 'X';
+                    if (bingo[j][k] === callout[i]) {
+                        bingo[j][k] = '🐙';
                     }
                     
                     // Check if the boards have a full cross
-                    let { status, position } = checkBingo(bingo[i], i);
+                    let status = checkBingo(bingo[j]);
                     if (status) {
                         boardWithCompleteRows = status;
-                        console.log(boardWithCompleteRows)
-                        bingoPosition = position;
                         results = {
-                            bingoPosition,
-                            board: bingo[bingoPosition],
-                            data: main[bingoPosition].length,
-                            number: callout[k],
+                            ['Board number']: j,
+                            ['The board']: bingo[j],
+                            ['What\'s left']: sumUnmarkedSlots(bingo[j]),
+                            ['Winning callout']: callout[i],
+                            ['Multiplying what\'s left with the winning callout']: sumUnmarkedSlots(bingo[j]) * callout[i],
                         }
                         isInProgress = false;
-                        break;
-                    }
-
-                    // if we have a board with complete rows...
-                    if (boardWithCompleteRows === true) {
                         break;
                     }
                 }
@@ -66,24 +52,20 @@ const playBingo = (callout, bingoSource) => {
         }
     }
 
-    console.log('Total: ', results)
+    console.log('Predicting the winning bingo: ', results);
 
 }
 
-function checkBingo(array, position) {
-    if ((array[0] === 'X' && array[1] === 'X' && array[2] === 'X' && array[3] === 'X' && array[4] === 'X')
-    || (array[0] === 'X' && array[5] === 'X' && array[10] === 'X' && array[15] === 'X' && array[20] === 'X')) {
-        return {
-            status: true,
-            position,
-        }
+function checkBingo(array) {
+    if (
+        (array[0] === '🐙' && array[1] === '🐙' && array[2] === '🐙' && array[3] === '🐙' && array[4] === '🐙')
+        || (array[0] === '🐙' && array[5] === '🐙' && array[10] === '🐙' && array[15] === '🐙' && array[20] === '🐙')
+    ) {
+        return true
     }
 
     else {
-        return {
-            status: false,
-            position: null,
-        }
+        return false
     }
 }
 
@@ -118,4 +100,10 @@ function prepareBingo(looper, data, cutNumber){
             callout: looper,
             bingo: newArray,
         }
+}
+    
+    const sumUnmarkedSlots = (data) => {
+        let clean = data.filter(item => item !== '🐙')
+            .reduce((a, b) => a + b);
+        return clean;
     }
