@@ -16,13 +16,15 @@ const playBingo = (callout, bingo) => {
     let isInProgress = true;
     let results;
     let boardWithCompleteRows = false;
+    let items = []
 
-    while (isInProgress) {
         
         // Continue to go through the list of bingo boards
         for (let i = 0; i < callout.length; i++) {
             if (boardWithCompleteRows === true) {
-                        break;
+                items.push(results);
+                console.log(items);
+                break;
             }
             for (let j = 0; j < bingo.length; j++) {
                 for (let k = 0; k < bingo[j].length; k++) {
@@ -36,23 +38,24 @@ const playBingo = (callout, bingo) => {
                     let status = checkBingo(bingo[j]);
                     if (status) {
                         boardWithCompleteRows = status;
+                        
                         results = {
                             ['Board number']: j,
                             ['The board']: bingo[j],
                             ['What\'s left']: sumUnmarkedSlots(bingo[j]),
                             ['Winning callout']: callout[i],
-                            ['Multiplying what\'s left with the winning callout']: sumUnmarkedSlots(bingo[j]) * callout[i],
+                            ['Multiplying what\'s left with the winning callout']: sumUnmarkedSlots(bingo[j]) * callout[i]
                         }
                         isInProgress = false;
                         break;
                     }
+                    
                 }
             }
 
-        }
     }
 
-    console.log('Predicting the winning bingo: ', results);
+    // console.log('Predicting the winning bingo: ', results);
 
 }
 
