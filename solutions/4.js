@@ -57,16 +57,19 @@ const playBingo = (callout, bingo) => {
 }
 
 function checkBingo(array) {
-    if (
-        (array[0] === '🐙' && array[1] === '🐙' && array[2] === '🐙' && array[3] === '🐙' && array[4] === '🐙')
-        || (array[0] === '🐙' && array[5] === '🐙' && array[10] === '🐙' && array[15] === '🐙' && array[20] === '🐙')
-    ) {
-        return true
+    // Count five times, and at each stop, check the row and columns
+    
+    for (let i = 0; i <= 5; i++) {
+        for (let j = 0; j < 24; j += 5) {
+            if (
+                array[i] === '🐙' && array[i + 5] === '🐙' && array[i + 10] === '🐙' && array[i + 15] === '🐙' && array[i + 20] === '🐙'
+                || array[j] === '🐙' && array[j + 1] === '🐙' && array[j + 2] === '🐙' && array[j + 3] === '🐙' && array[j + 4] === '🐙'
+            ) {
+                return true;
+            }
+        }
     }
-
-    else {
-        return false
-    }
+    return false;
 }
 
 //Sort the data from the puzzle input into a a standard array (for the bingo numbers)
